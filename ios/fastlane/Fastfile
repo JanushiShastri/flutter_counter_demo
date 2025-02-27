@@ -1,0 +1,17 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build the iOS app for a specific simulator"
+  lane :build_simulator do
+    build_ios_app(
+      scheme: "Runner",
+      destination: "platform=iOS Simulator,id=3EFB4C4E-D600-45B7-A492-16846038D3FF",
+      configuration: "Debug",
+      skip_package_ipa: true,
+      skip_profile_detection: true,
+      codesigning_identity: ""
+    )
+  end
+end
+
+
