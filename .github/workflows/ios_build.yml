@@ -1,0 +1,50 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.x'
+          channel: 'stable'
+          
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          cd ios && pod install && cd ..
+          
+      - name: Setup Ruby and Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: 'ios'
+          
+      - name: Install Fastlane
+        run: |
+          cd ios
+          gem install bundler
+          bundle install
+          
+      - name: List available simulators
+        run: |
+          cd ios
+          bundle exec fastlane list_sims
+          
+      - name: Build iOS app for simulator
+        run: |
+          cd ios
+          bundle exec fastlane build_simulator
